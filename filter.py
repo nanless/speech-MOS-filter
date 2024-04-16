@@ -7,11 +7,11 @@ from tqdm import tqdm
 from glob import glob
 plt.switch_backend('agg')
 
-dns_mos_threshold = 2.4
-wvmos_threshold = 2.4
-sigmos_threshold = 2.2
-nisqamos_threshold = 2.0
-utmos_thehold = 1.9
+dns_mos_threshold = 3.0
+wvmos_threshold = 3.6
+sigmos_threshold = 3.0
+nisqamos_threshold = 4.0
+utmos_thehold = 3.8
 
 def run(statistics_folder_path, origianl_folder_path, filtered_folder_path):
     all_statistics_file_path = glob(statistics_folder_path + "/*.csv")

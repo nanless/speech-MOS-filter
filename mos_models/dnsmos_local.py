@@ -7,7 +7,7 @@ import numpy as np
 import onnxruntime as ort
 SAMPLING_RATE = 16000
 INPUT_LENGTH = 9.01
-MODEL_PATH = "mos_models/checkpoints/DNSMOS"
+MODEL_PATH = "mos_models/checkpoints"
 
 class ComputeScore:
     def __init__(self, primary_model_path) -> None:

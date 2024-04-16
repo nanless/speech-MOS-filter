@@ -135,12 +135,6 @@ def filterout_previous_statistics(wav_files, previous_statistics_dirs):
     return filtered_wav_files
 
 if __name__ == "__main__":
-    # if len(sys.argv) != 3:
-    #     print('Usage: CUDA_VISIBLE_DEVICES="" python -m speech_enhancement.runners.ssi.scripts.filter_speech_based_on_mos_step1_compute_mos <wav_files_dir> <output_statistics_dir>')
-    #     sys.exit(1)
-    # batch_size = 1000
-    # source_folder = sys.argv[1]
-    # output_folder = sys.argv[2]
     parser = argparse.ArgumentParser()
     parser.add_argument('--wav_files_dir', type=str, help='Directory of wav files')
     parser.add_argument('--output_statistics_dir', type=str, help='Directory to save statistics')
