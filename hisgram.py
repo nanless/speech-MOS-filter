@@ -7,15 +7,17 @@ from tqdm import tqdm
 from glob import glob
 plt.switch_backend('agg')
 
-def run(statistics_folder_path):
+def run(statistics_folder_paths, output_folder_path):
 
-    all_statistics_file_path = glob(statistics_folder_path + "/*.csv")
+    all_statistics_file_path = []
+    for statistics_folder_path in statistics_folder_paths:
+        all_statistics_file_path += glob(statistics_folder_path + "/*.csv")
     df_total = pd.DataFrame()
     for statistics_file_path in tqdm(all_statistics_file_path):
         df = pd.read_csv(statistics_file_path)
         df_total = pd.concat([df_total, df], axis=0)
 
-    os.makedirs(statistics_folder_path+"/total_result", exist_ok=True)
+    os.makedirs(output_folder_path+"/total_result", exist_ok=True)
     dnsmos_values = []
     wvmos_values = []
     sigmos_values = []
@@ -35,7 +37,7 @@ def run(statistics_folder_path):
     plt.xlabel("dnsmos")
     plt.ylabel("density")
     plt.title("histgram of dnsmos")
-    plt.savefig(statistics_folder_path+"/total_result/histgram_dnsmos.png")
+    plt.savefig(output_folder_path+"/total_result/histgram_dnsmos.png")
 
 
     ### plot histgram of wvmos
@@ -45,7 +47,7 @@ def run(statistics_folder_path):
     plt.xlabel("wvmos")
     plt.ylabel("density")
     plt.title("histgram of wvmos")
-    plt.savefig(statistics_folder_path+"/total_result/histgram_wvmos.png")
+    plt.savefig(output_folder_path+"/total_result/histgram_wvmos.png")
 
     ### plot histgram of sigmos
     plt.figure(figsize=(20, 20))
@@ -54,7 +56,7 @@ def run(statistics_folder_path):
     plt.xlabel("sigmos")
     plt.ylabel("density")
     plt.title("histgram of sigmos")
-    plt.savefig(statistics_folder_path+"/total_result/histgram_sigmos.png")
+    plt.savefig(output_folder_path+"/total_result/histgram_sigmos.png")
 
     ### plot histgram of nisqamos
     plt.figure(figsize=(20, 20))
@@ -63,7 +65,7 @@ def run(statistics_folder_path):
     plt.xlabel("nisqamos")
     plt.ylabel("density")
     plt.title("histgram of nisqamos")
-    plt.savefig(statistics_folder_path+"/total_result/histgram_nisqamos.png")
+    plt.savefig(output_folder_path+"/total_result/histgram_nisqamos.png")
 
     ### plot histgram of utmos
     plt.figure(figsize=(20, 20))
@@ -72,10 +74,11 @@ def run(statistics_folder_path):
     plt.xlabel("utmos")
     plt.ylabel("density")
     plt.title("histgram of utmos")
-    plt.savefig(statistics_folder_path+"/total_result/histgram_utmos.png")
+    plt.savefig(output_folder_path+"/total_result/histgram_utmos.png")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--statistics_folder_path', type=str, required=True, help='path to the folder containing all statistics files')
+    parser.add_argument('--statistics_folder_paths', type=str, required=True, default=None, nargs='+', help='paths to the folders containing all statistics files')
+    parser.add_argument('--output_folder_path', type=str, required=True, help='path to the output folder')
     args = parser.parse_args()
-    run(args.statistics_folder_path)
+    run(args.statistics_folder_paths, args.output_folder_path)

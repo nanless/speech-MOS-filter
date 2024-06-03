@@ -140,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_statistics_dir', type=str, help='Directory to save statistics')
     # add an optional argument for previous statistics directories (maybe a list)
     parser.add_argument('--previous_statistics_dirs', type=str, default=None, nargs='+', help='Directories of previous statistics to skip processing')
-    parser.add_argument('--batch_size', type=int, default=1000, help='Batch size for multiprocessing')
+    parser.add_argument('--batch_size', type=int, default=100, help='Batch size for multiprocessing')
     parser.add_argument('--strip_silence', action='store_true', help='Whether to strip silence or not')
     parser.add_argument('--down24k', action='store_true', help='Whether to downsample to 24k or not')
     parser.add_argument('--normalize', action='store_true', help='Whether to normalize the signal or not')
