@@ -4,7 +4,7 @@ import time
 def run_script(index=9):
     # Replace 'your_script.py' with the actual name of your script and add necessary command line arguments
     
-    command = ["python", "compute_mos.py", "--wav_files_dir", "/root/autodl-tmp/DNS_challenge5_data/datasets_fullband/clean_fullband", "--output_statistics_dir", f"/root/autodl-tmp/DNS_challenge5_data/clean_mos_metrics_{index}", "--batch_size", "200", "--previous_statistics_dirs", "/root/autodl-tmp/DNS_challenge5_data/clean_mos_metrics"]
+    command = ["python", "compute_mos.py", "--wav_files_dir", "/root/autodl-tmp/DNS_challenge5_data/datasets_fullband/clean_fullband", "--output_statistics_dir", f"/root/autodl-tmp/DNS_challenge5_data/clean_mos_metrics_{index}", "--batch_size", "100", "--previous_statistics_dirs", "/root/autodl-tmp/DNS_challenge5_data/clean_mos_metrics"]
     for i in range(2, index):
         command.append(f"/root/autodl-tmp/DNS_challenge5_data/clean_mos_metrics_{i}")
     # Run the script
@@ -13,7 +13,7 @@ def run_script(index=9):
 
 def main():
 
-    cur_index = 9
+    cur_index = 48
 
     while True:
 
