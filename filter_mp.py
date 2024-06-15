@@ -11,12 +11,12 @@ import numpy as np
 from multiprocessing import Pool, cpu_count
 
 ### 截止频率
-cutoff_freq_default = 12000  # 最低截止频率
+cutoff_freq_threshold_default = 12000  # 最低截止频率
 dns_mos_threshold_default = 3.7
 wvmos_threshold_default = 3.9
 sigmos_threshold_default = 3.2
 nisqamos_threshold_default = 4.0
-utmos_thehold_default = 3.6
+utmos_threshold_default = 3.6
 
 def read_wav_file(filename):
     # 读取wav文件
@@ -51,8 +51,8 @@ def calculate_cutoff_frequency(filename):
     # 找到2000 Hz以上的频率
     high_freq_range = f > 2000
     
-    # 找到幅度大于平均能量的5%的频率
-    significant_freqs = f[high_freq_range][avg_magnitude[high_freq_range] > 0.05 * avg_energy]
+    # 找到幅度大于平均能量的1%的频率
+    significant_freqs = f[high_freq_range][avg_magnitude[high_freq_range] > 0.01 * avg_energy]
     
     # 实际截止频率为这些显著频率中的最大值，如果没有则为2000
     cutoff_frequency = np.max(significant_freqs) if significant_freqs.size > 0 else 2000
@@ -72,7 +72,7 @@ def process_file(args):
     
     if (dnsmos_value >= dns_mos_threshold and wvmos_value >= wvmos_threshold and 
         sigmos_value >= sigmos_threshold and nisqamos_value >= nisqamos_threshold and 
-        utmos_value >= utmos_thehold and cutoff_freq >= cutoff_freq):
+        utmos_value >= utmos_threshold and cutoff_freq >= cutoff_freq_threshold):
         
         out_path = filepath.replace(origianl_folder_path, filtered_folder_path)
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -94,19 +94,18 @@ def run(statistics_folder_paths, statisitcs_output_folder_path, origianl_folder_
     
     args_list = [(i, df_total.iloc[i], origianl_folder_path, filtered_folder_path) for i in range(len(df_total))]
     
-    with Pool(cpu_count()) as pool:
+    with Pool(16) as pool:
         results = list(tqdm(pool.imap(process_file, args_list), total=len(args_list)))
     
     df_new = pd.DataFrame(columns=df_total.columns)
     for row, selected in tqdm(results):
         if selected:
             df_new = df_new._append(row)
-        else:
-            df_total.loc[row.name] = row
+        df_total.loc[row.name] = row
 
-    os.makedirs(statisitcs_output_folder_path + "/total_result", exist_ok=True)
-    df_total.to_csv(statisitcs_output_folder_path + "/total_result/statistics_all.csv", index=False)
-    df_new.to_csv(statisitcs_output_folder_path + "/total_result/statistics_filtered.csv", index=False)
+    os.makedirs(statisitcs_output_folder_path, exist_ok=True)
+    df_total.to_csv(statisitcs_output_folder_path + "/statistics_all.csv", index=False)
+    df_new.to_csv(statisitcs_output_folder_path + "/statistics_filtered.csv", index=False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -118,13 +117,13 @@ if __name__ == '__main__':
     parser.add_argument('--wvmos_threshold', type=float, default=wvmos_threshold_default, help='The threshold of WV MOS')
     parser.add_argument('--sigmos_threshold', type=float, default=sigmos_threshold_default, help='The threshold of SIGMOS')
     parser.add_argument('--nisqamos_threshold', type=float, default=nisqamos_threshold_default, help='The threshold of NISQ MOS')
-    parser.add_argument('--utmos_thehold', type=float, default=utmos_thehold_default, help='The threshold of UT MOS')
-    parser.add_argument('--cutoff_freq', type=float, default=cutoff_freq_default, help='The default cutoff frequency')
+    parser.add_argument('--utmos_threshold', type=float, default=utmos_threshold_default, help='The threshold of UT MOS')
+    parser.add_argument('--cutoff_freq_threshold', type=float, default=cutoff_freq_threshold_default, help='The default cutoff frequency')
     args = parser.parse_args()
     dns_mos_threshold = args.dns_mos_threshold
     wvmos_threshold = args.wvmos_threshold
     sigmos_threshold = args.sigmos_threshold
     nisqamos_threshold = args.nisqamos_threshold
-    utmos_thehold = args.utmos_thehold
-    cutoff_freq = args.cutoff_freq
+    utmos_threshold = args.utmos_threshold
+    cutoff_freq_threshold = args.cutoff_freq_threshold
     run(args.statistics_folder_paths, args.statisitcs_output_folder_path, args.origianl_folder_path, args.filtered_folder_path)
